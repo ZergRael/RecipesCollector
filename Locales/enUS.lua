@@ -1,0 +1,7 @@
+local L = _G.LibStub("AceLocale-3.0"):NewLocale("RecipesCollector", "enUS", true)
+
+L["Options"] = "Options"
+L["Requires ([%w%s]+) "] = "Requires ([%w%s]+) "
+L["Database Settings"] = "Database Settings"
+L["Delete a tradeskill profile"] = "Delete a tradeskill profile"
+L["Deleted profile %s - %s"] = "Deleted profile %s - %s"

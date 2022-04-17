@@ -1,0 +1,14 @@
+## Interface: 20504
+## Title: RecipesCollector
+## Notes: Track known professions across every alt with a tooltip addition on recipes
+## Author: zergrael
+## Version: @project-version@
+## Revision: @project-abbreviated-hash@
+## SavedVariables: RecipesCollector
+
+embeds.xml
+locales.xml
+
+RecipesCollector.lua
+options.lua
+utils.lua
