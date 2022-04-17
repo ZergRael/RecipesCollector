@@ -8,7 +8,11 @@ _This addon is currently in beta state, expect issues you may want to [report](h
 
 - Adds a tooltip line on recipes for every character with matching profession
 
-![](https://img.thetabx.net/igCtX.png)
+![](https://img.thetabx.net/25hJv.png)
+
+- Compact mode
+
+![](https://img.thetabx.net/lPKEx.png)
 
 ## Commands
 
@@ -16,8 +20,6 @@ _This addon is currently in beta state, expect issues you may want to [report](h
 
 ## Todo
 
-- Replace Y/N with icons
-- Compact mode
 - Option to hide if unlearnable
 - Anything you would like ? Please create an [issue on Github](https://github.com/ZergRael/RecipesCollector/issues)
 

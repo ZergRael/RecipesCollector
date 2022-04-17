@@ -9,8 +9,9 @@ local Recipes = _G.LibStub("LibRecipes-3.0")
 function RC:OnInitialize()
     -- Addon savedvariables database
     self.db = _G.LibStub("AceDB-3.0"):New(addonName, {
-        -- profile = {
-        -- },
+        global = {
+            compactMode = false,
+        },
         factionrealm = {
             numRecipesPerTradeskill = {},
             recipes = {},
@@ -163,7 +164,7 @@ function RC:OnTooltipSetItem(tooltip)
 
     local lines = {}
     for charName, recipes in pairs(self.db.factionrealm.recipes[normalizedProfession]) do
-        local check = _G.tContains(recipes, tostring(itemId or spellId)) and " |cFF00FF00Y|r" or " |cFFFF0000N|r"
+        local check = _G.tContains(recipes, tostring(itemId or spellId)) and " |cFF00FF00X|r" or " |cFFFF0000~|r"
         _G.tinsert(lines, charName .. check)
     end
 
@@ -172,8 +173,13 @@ function RC:OnTooltipSetItem(tooltip)
     end
 
     tooltip:AddLine(" ")
-    for _, line in ipairs(lines) do
-        tooltip:AddLine(line)
+    if self.db.global.compactMode then
+        tooltip:AddLine(_G.strjoin(' - ', _G.unpack(lines)))
+    else
+        tooltip:AddLine("|cFFAAAAAA" .. addonName .. "|r")
+        for _, line in ipairs(lines) do
+            tooltip:AddLine(line)
+        end
     end
 end
 

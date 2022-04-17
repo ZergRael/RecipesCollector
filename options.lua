@@ -22,6 +22,21 @@ function RC:RegisterOptionsTable()
                         type = "description",
                         name = addonNotes,
                     },
+                    general = {
+                        order = 10,
+                        type = "group",
+                        name = L["General Settings"],
+                        inline = true,
+                        args = {
+                            compactMode = {
+                                order = 10,
+                                type = "toggle",
+                                name = L["Compact mode"],
+                                get = function() return self.db.global.compactMode end,
+                                set = function(_, val) self.db.global.compactMode = val end,
+                            }
+                        },
+                    },
                     db = {
                         order = 20,
                         type = "group",
