@@ -144,7 +144,7 @@ function RC:OnTooltipSetItem(tooltip)
 
     local profession = nil
     for i = 1, _G.GameTooltip:NumLines() do
-        profession = _G["GameTooltipTextLeft" .. i]:GetText():match(L["Requires ([%w%s]+) "])
+        profession = _G["GameTooltipTextLeft" .. i]:GetText():match(L["Requires ([%w%s]+) %((%d+)%)"])
         if profession then
             break
         end
