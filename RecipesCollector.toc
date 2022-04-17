@@ -11,4 +11,4 @@ locales.xml
 
 RecipesCollector.lua
 options.lua
-utils.lua
+constants.lua

@@ -14,6 +14,7 @@ function RC:OnInitialize()
         },
         factionrealm = {
             classes = {},
+            professions = {},
             numRecipesPerTradeskill = {},
             recipes = {},
         },
@@ -116,10 +117,30 @@ function RC:InitializeDBForPlayerIfNecessary(playerName, tradeSkillName)
     end
 
     self.db.factionrealm.classes[playerName] = _G.UnitClassBase("player")
+    self.db.factionrealm.professions[playerName] = self:GetAllSkills()
 end
 
 function RC:GetNumRecipesPerTradeskill(playerName, tradeSkillName)
     return self.db.factionrealm.numRecipesPerTradeskill[tradeSkillName][playerName]
+end
+
+function RC:GetAllSkills()
+    local professionsNames = self.ProfessionNames[_G.GetLocale()]
+    local skills = {}
+    local numSkills = _G.GetNumSkillLines();
+    for idx = 1, numSkills, 1 do
+        local skillName, header, isExpanded, skillRank, numTempPoints, skillModifier, skillMaxRank, isAbandonable, stepCost, rankCost, minLevel, skillCostType = _G.GetSkillLineInfo(idx);
+        if not header then
+            local skill_info = { skillName, header, isExpanded, skillRank, numTempPoints, skillModifier,
+                skillMaxRank, isAbandonable, stepCost, rankCost, minLevel, skillCostType }
+
+            if _G.tContains(professionsNames, skillName) then
+                skills[skillName] = skillRank
+            end
+        end
+    end
+
+    return skills
 end
 
 function RC:OnTooltipSetItem(tooltip)
@@ -146,9 +167,9 @@ function RC:OnTooltipSetItem(tooltip)
     self.debounceRecipe = nil
     -- self:Print(itemLink, recipeId, spellId, itemId)
 
-    local profession = nil
+    local profession, skillRank = nil, 1000
     for i = 1, _G.GameTooltip:NumLines() do
-        profession = _G["GameTooltipTextLeft" .. i]:GetText():match(L["Requires ([%w%s]+) %((%d+)%)"])
+        profession, skillRank = _G["GameTooltipTextLeft" .. i]:GetText():match(L["Requires ([%w%s]+) %((%d+)%)"])
         if profession then
             break
         end
@@ -166,10 +187,23 @@ function RC:OnTooltipSetItem(tooltip)
     end
 
     local lines = {}
+    local compact = self.db.global.compactMode
     for charName, recipes in pairs(self.db.factionrealm.recipes[normalizedProfession]) do
-        local coloredCharName = "|c" .. select(4, _G.GetClassColor(self.db.factionrealm.classes[charName])) .. charName .. "|r"
-        local check = _G.tContains(recipes, tostring(itemId or spellId)) and " |cFF00FF00X|r" or " |cFFFF0000~|r"
-        _G.tinsert(lines, coloredCharName .. check)
+        local line = "|c" .. select(4, _G.GetClassColor(self.db.factionrealm.classes[charName])) .. charName .. "|r"
+        local charSkillRank = self.db.factionrealm.professions[charName] and self.db.factionrealm.professions[charName][normalizedProfession]
+        if not compact and charSkillRank then
+            line = line .. " |cFFAAAAAA(" .. charSkillRank .. ")|r"
+        end
+        if _G.tContains(recipes, tostring(itemId or spellId)) then
+            line = line .. " |cFF00FF00" .. (compact and _G.YES or _G.ITEM_SPELL_KNOWN) .. "|r"
+        else
+            if charSkillRank and charSkillRank >= tonumber(skillRank) then
+                line = line .. " |cFFDB8139" .. (compact and _G.NO or _G.UNKNOWN) .. "|r"
+            else
+                line = line .. " |cFFCC0000" .. (compact and "X" or _G.SPELL_FAILED_LOW_CASTLEVEL) .. "|r"
+            end
+        end
+        _G.tinsert(lines, line)
     end
 
     if #lines == 0 then
@@ -177,7 +211,7 @@ function RC:OnTooltipSetItem(tooltip)
     end
 
     tooltip:AddLine(" ")
-    if self.db.global.compactMode then
+    if compact then
         tooltip:AddLine(_G.strjoin(' - ', _G.unpack(lines)))
     else
         tooltip:AddLine("|cFFAAAAAA" .. addonName .. "|r")
