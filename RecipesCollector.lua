@@ -161,8 +161,19 @@ function RC:OnTooltipSetItem(tooltip)
         return
     end
 
-    for name, recipes in pairs(self.db.factionrealm.recipes[normalizedProfession]) do
-        tooltip:AddLine(name .. ": " .. (_G.tContains(recipes, tostring(itemId or spellId)) and "Y" or "N"))
+    local lines = {}
+    for charName, recipes in pairs(self.db.factionrealm.recipes[normalizedProfession]) do
+        local check = _G.tContains(recipes, tostring(itemId or spellId)) and " |cFF00FF00Y|r" or " |cFFFF0000N|r"
+        _G.tinsert(lines, charName .. check)
+    end
+
+    if #lines == 0 then
+        return
+    end
+
+    tooltip:AddLine(" ")
+    for _, line in ipairs(lines) do
+        tooltip:AddLine(line)
     end
 end
 
