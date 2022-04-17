@@ -13,6 +13,7 @@ function RC:OnInitialize()
             compactMode = false,
         },
         factionrealm = {
+            classes = {},
             numRecipesPerTradeskill = {},
             recipes = {},
         },
@@ -113,6 +114,8 @@ function RC:InitializeDBForPlayerIfNecessary(playerName, tradeSkillName)
     if self.db.factionrealm.recipes[tradeSkillName][playerName] == nil then
         self.db.factionrealm.recipes[tradeSkillName][playerName] = {}
     end
+
+    self.db.factionrealm.classes[playerName] = _G.UnitClassBase("player")
 end
 
 function RC:GetNumRecipesPerTradeskill(playerName, tradeSkillName)
@@ -164,8 +167,9 @@ function RC:OnTooltipSetItem(tooltip)
 
     local lines = {}
     for charName, recipes in pairs(self.db.factionrealm.recipes[normalizedProfession]) do
+        local coloredCharName = "|c" .. select(4, _G.GetClassColor(self.db.factionrealm.classes[charName])) .. charName .. "|r"
         local check = _G.tContains(recipes, tostring(itemId or spellId)) and " |cFF00FF00X|r" or " |cFFFF0000~|r"
-        _G.tinsert(lines, charName .. check)
+        _G.tinsert(lines, coloredCharName .. check)
     end
 
     if #lines == 0 then
