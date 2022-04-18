@@ -1,6 +1,4 @@
 local addonName = "RecipesCollector"
-local addonTitle = select(2, _G.GetAddOnInfo(addonName))
-local addonVersion = _G.GetAddOnMetadata(addonName, "Version")
 local RC = _G.LibStub("AceAddon-3.0"):NewAddon(addonName, "AceEvent-3.0", "AceHook-3.0")
 local L = _G.LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local Recipes = _G.LibStub("LibRecipes-3.0")
@@ -39,23 +37,18 @@ function RC:OnInitialize()
     self:RegisterOptionsTable()
 end
 
--- For some reason, enchanting seems to be the only craft profession
+-- Enchanting frame opened
 function RC:CRAFT_SHOW()
-    -- self:Print("CRAFT_SHOW")
-    self.currentTradeSkill = self:NormalizeProfessionName(_G.GetCraftDisplaySkillLine())
-    -- self:Print(self.currentTradeSkill)
-
-    local playerName = _G.UnitName("player")
-    self:InitializeDBForPlayerIfNecessary(playerName, self.currentTradeSkill)
+    -- For some reason, enchanting seems to be the only "Craft" profession as opposed to "TradeSkill" professions
+    self.currentTradeSkill = _G.GetCraftDisplaySkillLine()
+    self:InitializeDBForPlayerIfNecessary(_G.UnitName("player"), _G.UnitClassBase("player"), self.currentTradeSkill)
 end
 
+-- Enchanting frame updated
 function RC:CRAFT_UPDATE()
-    -- self:Print("CRAFT_UPDATE")
-
     local playerName = _G.UnitName("player")
     local numRecipes = _G:GetNumCrafts()
     if self:GetNumRecipesPerTradeskill(playerName, self.currentTradeSkill) >= numRecipes then
-        -- self:Print("CRAFT_UPDATE: No changes in recipes, bail out")
         return
     end
 
@@ -70,30 +63,25 @@ function RC:CRAFT_UPDATE()
     end
 end
 
+-- Crafting frame opened
 function RC:TRADE_SKILL_SHOW()
-    -- self:Print("TRADE_SKILL_SHOW")
-    self.currentTradeSkill = self:NormalizeProfessionName(_G.GetTradeSkillLine())
-    -- self:Print(self.currentTradeSkill)
+    self.currentTradeSkill = _G.GetTradeSkillLine()
 
-    local playerName = _G.UnitName("player")
-    self:InitializeDBForPlayerIfNecessary(playerName, self.currentTradeSkill)
+    self:InitializeDBForPlayerIfNecessary(_G.UnitName("player"), _G.UnitClassBase("player"), self.currentTradeSkill)
 end
 
+-- Crafting frame updated
 function RC:TRADE_SKILL_UPDATE()
-    -- self:Print("TRADE_SKILL_UPDATE")
-    -- self:Print(_G.GetTradeSkillLine())
-
     local playerName = _G.UnitName("player")
     local numRecipes = _G:GetNumTradeSkills()
     if self:GetNumRecipesPerTradeskill(playerName, self.currentTradeSkill) >= numRecipes then
-        -- self:Print("TRADE_SKILL_UPDATE: No changes in recipes, bail out")
         return
     end
 
     self.db.factionrealm.numRecipesPerTradeskill[self.currentTradeSkill][playerName] = numRecipes
 
     for idx = 1, numRecipes, 1 do
-        local skillName, skillType = _G.GetTradeSkillInfo(idx);
+        local _, skillType = _G.GetTradeSkillInfo(idx);
         if skillType ~= "header" and skillType ~= nil then
             local tradeSkillLink = _G.GetTradeSkillItemLink(idx)
             local recipeId = tradeSkillLink:match("item:(%d+):")
@@ -104,7 +92,8 @@ function RC:TRADE_SKILL_UPDATE()
     end
 end
 
-function RC:InitializeDBForPlayerIfNecessary(playerName, tradeSkillName)
+-- Generate initial database structure for a character tradeskill
+function RC:InitializeDBForPlayerIfNecessary(playerName, playerClass, tradeSkillName)
     if self.db.factionrealm.numRecipesPerTradeskill[tradeSkillName] == nil then
         self.db.factionrealm.numRecipesPerTradeskill[tradeSkillName] = {}
     end
@@ -118,7 +107,7 @@ function RC:InitializeDBForPlayerIfNecessary(playerName, tradeSkillName)
         self.db.factionrealm.recipes[tradeSkillName][playerName] = {}
     end
 
-    self.db.factionrealm.classes[playerName] = _G.UnitClassBase("player")
+    self.db.factionrealm.classes[playerName] = playerClass
     self.db.factionrealm.professions[playerName] = self:GetAllSkills()
 end
 
@@ -126,16 +115,14 @@ function RC:GetNumRecipesPerTradeskill(playerName, tradeSkillName)
     return self.db.factionrealm.numRecipesPerTradeskill[tradeSkillName][playerName]
 end
 
+-- Scan all skills and return professions related ones with skill rank
 function RC:GetAllSkills()
     local professionsNames = self.ProfessionNames[_G.GetLocale()]
     local skills = {}
     local numSkills = _G.GetNumSkillLines();
     for idx = 1, numSkills, 1 do
-        local skillName, header, isExpanded, skillRank, numTempPoints, skillModifier, skillMaxRank, isAbandonable, stepCost, rankCost, minLevel, skillCostType = _G.GetSkillLineInfo(idx);
+        local skillName, header, _, skillRank = _G.GetSkillLineInfo(idx);
         if not header then
-            local skill_info = { skillName, header, isExpanded, skillRank, numTempPoints, skillModifier,
-                skillMaxRank, isAbandonable, stepCost, rankCost, minLevel, skillCostType }
-
             if _G.tContains(professionsNames, skillName) then
                 skills[skillName] = skillRank
             end
@@ -145,6 +132,7 @@ function RC:GetAllSkills()
     return skills
 end
 
+-- Tooltip hook, used to read recipes requirements and append own lines
 function RC:OnTooltipSetItem(tooltip)
     local _, itemLink = tooltip:GetItem()
     if not itemLink then
@@ -162,12 +150,12 @@ function RC:OnTooltipSetItem(tooltip)
     end
 
     -- Recipes tooltip are called twice except for enchanting
+    -- The second seems to be a better option as it will put text on the lower end of the tooltip
     if subclassID ~= _G.LE_ITEM_RECIPE_ENCHANTING and self.debounceRecipe ~= recipeID then
         self.debounceRecipe = recipeID
         return
     end
     self.debounceRecipe = nil
-    -- self:Print(itemLink, recipeId, spellId, itemId)
 
     local profession, skillRank = nil, 1000
     for i = 1, _G.GameTooltip:NumLines() do
@@ -178,21 +166,18 @@ function RC:OnTooltipSetItem(tooltip)
     end
 
     if not profession then
-        -- self:Print("Probably not a recipe")
         return
     end
 
-    local normalizedProfession = self:NormalizeProfessionName(profession)
-    if not self.db.factionrealm.recipes[normalizedProfession] then
-        -- self:Print("Missing profession in DB")
+    if not self.db.factionrealm.recipes[profession] then
         return
     end
 
     local lines = {}
     local compact = self.db.global.compactMode
-    for charName, recipes in pairs(self.db.factionrealm.recipes[normalizedProfession]) do
+    for charName, recipes in pairs(self.db.factionrealm.recipes[profession]) do
         local alreadyKnown = _G.tContains(recipes, tostring(itemId or spellId))
-        local charSkillRank = self.db.factionrealm.professions[charName] and self.db.factionrealm.professions[charName][normalizedProfession]
+        local charSkillRank = self.db.factionrealm.professions[charName] and self.db.factionrealm.professions[charName][profession]
 
         local line = "|c" .. select(4, _G.GetClassColor(self.db.factionrealm.classes[charName])) .. charName .. "|r"
         if not compact and charSkillRank then
@@ -228,12 +213,7 @@ function RC:OnTooltipSetItem(tooltip)
     end
 end
 
-function RC:NormalizeProfessionName(str)
-    -- TODO: Check if necessary to manipulate professions names
-    -- maybe to remove specs ?
-    return str
-end
-
+-- List database profiles
 function RC:ListProfiles()
     local profiles = {}
 
@@ -246,9 +226,10 @@ function RC:ListProfiles()
     return profiles
 end
 
+-- Remove specific charname & tradeskill profile from database
 function RC:RemoveProfile(profile)
     local charName, tradeSkillName = _G.strsplit("_", profile)
     self.db.factionrealm.recipes[tradeSkillName][charName] = nil
     self.db.factionrealm.numRecipesPerTradeskill[tradeSkillName][charName] = nil
-    self:Print(_G.format(L["Deleted profile %s - %s"], charName, tradeSkillName))
+    print(addonName .. ": " .. _G.format(L["Deleted profile %s - %s"], charName, tradeSkillName))
 end
