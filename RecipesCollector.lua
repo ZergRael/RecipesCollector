@@ -11,6 +11,8 @@ function RC:OnInitialize()
     self.db = _G.LibStub("AceDB-3.0"):New(addonName, {
         global = {
             compactMode = false,
+            hideAlreadyKnown = false,
+            hideUnlearnable = true,
         },
         factionrealm = {
             classes = {},
@@ -189,12 +191,14 @@ function RC:OnTooltipSetItem(tooltip)
     local lines = {}
     local compact = self.db.global.compactMode
     for charName, recipes in pairs(self.db.factionrealm.recipes[normalizedProfession]) do
-        local line = "|c" .. select(4, _G.GetClassColor(self.db.factionrealm.classes[charName])) .. charName .. "|r"
+        local alreadyKnown = _G.tContains(recipes, tostring(itemId or spellId))
         local charSkillRank = self.db.factionrealm.professions[charName] and self.db.factionrealm.professions[charName][normalizedProfession]
+
+        local line = "|c" .. select(4, _G.GetClassColor(self.db.factionrealm.classes[charName])) .. charName .. "|r"
         if not compact and charSkillRank then
             line = line .. " |cFFAAAAAA(" .. charSkillRank .. ")|r"
         end
-        if _G.tContains(recipes, tostring(itemId or spellId)) then
+        if alreadyKnown then
             line = line .. " |cFF00FF00" .. (compact and _G.YES or _G.ITEM_SPELL_KNOWN) .. "|r"
         else
             if charSkillRank and charSkillRank >= tonumber(skillRank) then
@@ -203,7 +207,10 @@ function RC:OnTooltipSetItem(tooltip)
                 line = line .. " |cFFCC0000" .. (compact and "X" or _G.SPELL_FAILED_LOW_CASTLEVEL) .. "|r"
             end
         end
-        _G.tinsert(lines, line)
+
+        if (not self.db.global.hideUnlearnable or (charSkillRank and charSkillRank >= tonumber(skillRank))) and not (self.db.global.hideAlreadyKnown and alreadyKnown) then
+            _G.tinsert(lines, line)
+        end
     end
 
     if #lines == 0 then

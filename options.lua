@@ -34,7 +34,21 @@ function RC:RegisterOptionsTable()
                                 name = L["Compact mode"],
                                 get = function() return self.db.global.compactMode end,
                                 set = function(_, val) self.db.global.compactMode = val end,
-                            }
+                            },
+                            hideAlreadyKnown = {
+                                order = 20,
+                                type = "toggle",
+                                name = L["Hide if already known"],
+                                get = function() return self.db.global.hideAlreadyKnown end,
+                                set = function(_, val) self.db.global.hideAlreadyKnown = val end,
+                            },
+                            hideUnlearnable = {
+                                order = 30,
+                                type = "toggle",
+                                name = L["Hide if skill not high enough"],
+                                get = function() return self.db.global.hideUnlearnable end,
+                                set = function(_, val) self.db.global.hideUnlearnable = val end,
+                            },
                         },
                     },
                     db = {
