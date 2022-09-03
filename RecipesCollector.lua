@@ -22,12 +22,9 @@ function RC:OnInitialize()
 
     -- Addon session variables
     self.debounceRecipe = nil
-    self.currentTradeSkill = nil
 
     -- Events register
-    self:RegisterEvent("CRAFT_SHOW")
     self:RegisterEvent("CRAFT_UPDATE")
-    self:RegisterEvent("TRADE_SKILL_SHOW")
     self:RegisterEvent("TRADE_SKILL_UPDATE")
 
     -- Hooks
@@ -37,56 +34,57 @@ function RC:OnInitialize()
     self:RegisterOptionsTable()
 end
 
--- Enchanting frame opened
-function RC:CRAFT_SHOW()
-    -- For some reason, enchanting seems to be the only "Craft" profession as opposed to "TradeSkill" professions
-    self.currentTradeSkill = _G.GetCraftDisplaySkillLine()
-    self:InitializeDBForPlayerIfNecessary(_G.UnitName("player"), _G.UnitClassBase("player"), self.currentTradeSkill)
-end
-
 -- Enchanting frame updated
 function RC:CRAFT_UPDATE()
     local playerName = _G.UnitName("player")
-    local numRecipes = _G:GetNumCrafts()
-    if self:GetNumRecipesPerTradeskill(playerName, self.currentTradeSkill) >= numRecipes then
+    -- Event might have fired too early
+    if not playerName then
         return
     end
 
-    self.db.factionrealm.numRecipesPerTradeskill[self.currentTradeSkill][playerName] = numRecipes
+    local numRecipes = _G:GetNumCrafts()
+    local currentTradeSkill = _G.GetCraftDisplaySkillLine()
+    self:InitializeDBForPlayerIfNecessary(playerName, _G.UnitClassBase("player"), currentTradeSkill)
+    if self:GetNumRecipesPerTradeskill(playerName, currentTradeSkill) >= numRecipes then
+        return
+    end
+
+    self.db.factionrealm.numRecipesPerTradeskill[currentTradeSkill][playerName] = numRecipes
 
     for idx = 1, numRecipes, 1 do
         local tradeSkillLink = _G.GetCraftItemLink(idx)
         local recipeId = tradeSkillLink:match("enchant:(%d+)|")
-        if not _G.tContains(self.db.factionrealm.recipes[self.currentTradeSkill][playerName], recipeId) then
-            _G.tinsert(self.db.factionrealm.recipes[self.currentTradeSkill][playerName], recipeId)
+        if not _G.tContains(self.db.factionrealm.recipes[currentTradeSkill][playerName], recipeId) then
+            _G.tinsert(self.db.factionrealm.recipes[currentTradeSkill][playerName], recipeId)
         end
     end
-end
-
--- Crafting frame opened
-function RC:TRADE_SKILL_SHOW()
-    self.currentTradeSkill = _G.GetTradeSkillLine()
-
-    self:InitializeDBForPlayerIfNecessary(_G.UnitName("player"), _G.UnitClassBase("player"), self.currentTradeSkill)
 end
 
 -- Crafting frame updated
 function RC:TRADE_SKILL_UPDATE()
     local playerName = _G.UnitName("player")
-    local numRecipes = _G:GetNumTradeSkills()
-    if self:GetNumRecipesPerTradeskill(playerName, self.currentTradeSkill) >= numRecipes then
+    -- Event might have fired too early
+    if not playerName then
         return
     end
 
-    self.db.factionrealm.numRecipesPerTradeskill[self.currentTradeSkill][playerName] = numRecipes
+    local numRecipes = _G:GetNumTradeSkills()
+    local currentTradeSkill = _G.GetTradeSkillLine()
+    self:InitializeDBForPlayerIfNecessary(playerName, _G.UnitClassBase("player"), currentTradeSkill)
+
+    if self:GetNumRecipesPerTradeskill(playerName, currentTradeSkill) >= numRecipes then
+        return
+    end
+
+    self.db.factionrealm.numRecipesPerTradeskill[currentTradeSkill][playerName] = numRecipes
 
     for idx = 1, numRecipes, 1 do
         local _, skillType = _G.GetTradeSkillInfo(idx);
         if skillType ~= "header" and skillType ~= nil then
             local tradeSkillLink = _G.GetTradeSkillItemLink(idx)
             local recipeId = tradeSkillLink:match("item:(%d+):")
-            if not _G.tContains(self.db.factionrealm.recipes[self.currentTradeSkill][playerName], recipeId) then
-                _G.tinsert(self.db.factionrealm.recipes[self.currentTradeSkill][playerName], recipeId)
+            if not _G.tContains(self.db.factionrealm.recipes[currentTradeSkill][playerName], recipeId) then
+                _G.tinsert(self.db.factionrealm.recipes[currentTradeSkill][playerName], recipeId)
             end
         end
     end
@@ -177,7 +175,8 @@ function RC:OnTooltipSetItem(tooltip)
     local compact = self.db.global.compactMode
     for charName, recipes in pairs(self.db.factionrealm.recipes[profession]) do
         local alreadyKnown = _G.tContains(recipes, tostring(itemId or spellId))
-        local charSkillRank = self.db.factionrealm.professions[charName] and self.db.factionrealm.professions[charName][profession]
+        local charSkillRank = self.db.factionrealm.professions[charName] and
+            self.db.factionrealm.professions[charName][profession]
 
         local line = "|c" .. select(4, _G.GetClassColor(self.db.factionrealm.classes[charName])) .. charName .. "|r"
         if not compact and charSkillRank then
@@ -193,7 +192,8 @@ function RC:OnTooltipSetItem(tooltip)
             end
         end
 
-        if (not self.db.global.hideUnlearnable or (charSkillRank and charSkillRank >= tonumber(skillRank))) and not (self.db.global.hideAlreadyKnown and alreadyKnown) then
+        if (not self.db.global.hideUnlearnable or (charSkillRank and charSkillRank >= tonumber(skillRank))) and
+            not (self.db.global.hideAlreadyKnown and alreadyKnown) then
             _G.tinsert(lines, line)
         end
     end
