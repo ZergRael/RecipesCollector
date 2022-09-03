@@ -2,7 +2,8 @@
 
 **Track known professions across every alt with a tooltip addition on recipes**
 
-_This addon is currently in beta state, expect issues you may want to [report](https://github.com/ZergRael/RecipesCollector/issues) !_
+**WARNING**
+**DOES NOT INCLUDE WOTLK RECIPES YET**
 
 ## Features
 
@@ -27,7 +28,7 @@ _This addon is currently in beta state, expect issues you may want to [report](h
 
 ## Known issues
 
-- None currently
+- No support for WotLK recipes
 
 ## Contribution
 
