@@ -16,7 +16,7 @@ RC.ProfessionNames = {
         "Skinning",
         "Jewelcrafting",
         "First Aid",
-        -- "Inscription",
+        "Inscription",
     },
     deDE = {
         "Schmiedekunst",
@@ -32,7 +32,7 @@ RC.ProfessionNames = {
         "Kürschnerei",
         "Juwelierskunst",
         "Erste Hilfe",
-        -- "Inschriftenkunde",
+        "Inschriftenkunde",
     },
     frFR = {
         "Forge",
@@ -48,7 +48,7 @@ RC.ProfessionNames = {
         "Dépeçage",
         "Joaillerie",
         "Secourisme",
-        -- "Calligraphie",
+        "Calligraphie",
     },
     esMX = {
         "Herrería",
@@ -64,7 +64,7 @@ RC.ProfessionNames = {
         "Desuello",
         "Joyería",
         "Primeros auxilios",
-        -- "Inscripción",
+        "Inscripción",
     },
     ptBR = {
         "Ferraria",
@@ -80,7 +80,7 @@ RC.ProfessionNames = {
         "Esfolamento",
         "Joalheria",
         "Primeiros Socorros",
-        -- "Escrivania",
+        "Escrivania",
     },
     ruRU = {
         "Кузнечное дело",
@@ -96,7 +96,7 @@ RC.ProfessionNames = {
         "Снятие шкур",
         "Ювелирное дело",
         "Первая помощь",
-        -- "Начертание",
+        "Начертание",
     },
     zhCN = {
         "锻造",
@@ -112,7 +112,7 @@ RC.ProfessionNames = {
         "剥皮",
         "珠宝加工",
         "急救",
-        -- "铭文",
+        "铭文",
     },
     zhTW = {
         "鍛造",
@@ -128,7 +128,7 @@ RC.ProfessionNames = {
         "剝皮",
         "珠寶設計",
         "急救",
-        -- "銘文學",
+        "銘文學",
     },
     koKR = {
         "대장기술",
@@ -144,6 +144,6 @@ RC.ProfessionNames = {
         "무두질",
         "보석세공",
         "응급치료",
-        -- "주문각인",
+        "주문각인",
     },
 }
