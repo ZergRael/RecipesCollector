@@ -24,7 +24,6 @@ function RC:OnInitialize()
     self.debounceRecipe = nil
 
     -- Events register
-    self:RegisterEvent("CRAFT_UPDATE")
     self:RegisterEvent("TRADE_SKILL_UPDATE")
 
     -- Hooks
@@ -34,33 +33,7 @@ function RC:OnInitialize()
     self:RegisterOptionsTable()
 end
 
--- Enchanting frame updated
-function RC:CRAFT_UPDATE()
-    local playerName = _G.UnitName("player")
-    -- Event might have fired too early
-    if not playerName then
-        return
-    end
-
-    local numRecipes = _G:GetNumCrafts()
-    local currentTradeSkill = _G.GetCraftDisplaySkillLine()
-    self:InitializeDBForPlayerIfNecessary(playerName, _G.UnitClassBase("player"), currentTradeSkill)
-    if self:GetNumRecipesPerTradeskill(playerName, currentTradeSkill) >= numRecipes then
-        return
-    end
-
-    self.db.factionrealm.numRecipesPerTradeskill[currentTradeSkill][playerName] = numRecipes
-
-    for idx = 1, numRecipes, 1 do
-        local tradeSkillLink = _G.GetCraftItemLink(idx)
-        local recipeId = tradeSkillLink:match("enchant:(%d+)|")
-        if not _G.tContains(self.db.factionrealm.recipes[currentTradeSkill][playerName], recipeId) then
-            _G.tinsert(self.db.factionrealm.recipes[currentTradeSkill][playerName], recipeId)
-        end
-    end
-end
-
--- Crafting frame updated
+-- Tradeskill frame updated
 function RC:TRADE_SKILL_UPDATE()
     local playerName = _G.UnitName("player")
     -- Event might have fired too early
@@ -82,7 +55,10 @@ function RC:TRADE_SKILL_UPDATE()
         local _, skillType = _G.GetTradeSkillInfo(idx);
         if skillType ~= "header" and skillType ~= nil then
             local tradeSkillLink = _G.GetTradeSkillItemLink(idx)
-            local recipeId = tradeSkillLink:match("item:(%d+):")
+            local enchantLink = _G.GetTradeSkillRecipeLink(idx)
+            local recipeId = tradeSkillLink and tradeSkillLink:match("item:(%d+):") or
+                enchantLink:match("enchant:(%d+)|")
+
             if not _G.tContains(self.db.factionrealm.recipes[currentTradeSkill][playerName], recipeId) then
                 _G.tinsert(self.db.factionrealm.recipes[currentTradeSkill][playerName], recipeId)
             end
