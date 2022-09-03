@@ -1,4 +1,5 @@
 local addonName = "RecipesCollector"
+local addonNotes = select(3, _G.GetAddOnInfo(addonName))
 local RC = _G.LibStub("AceAddon-3.0"):GetAddon(addonName)
 local L = _G.LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local AceConfig = _G.LibStub("AceConfig-3.0")
