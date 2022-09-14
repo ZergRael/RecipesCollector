@@ -1,4 +1,5 @@
-local L = _G.LibStub("AceLocale-3.0"):NewLocale("RecipesCollector", "frFR", true)
+local L = _G.LibStub("AceLocale-3.0"):NewLocale("RecipesCollector", "frFR")
+if not L then return end
 
 L["Compact mode"] = "Mode compact"
 L["Database Settings"] = "Paramètres de base de données"
