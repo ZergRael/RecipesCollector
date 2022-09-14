@@ -2,9 +2,6 @@
 
 **Track known professions across every alt with a tooltip addition on recipes**
 
-**WARNING**
-**DOES NOT INCLUDE WOTLK RECIPES YET**
-
 ## Features
 
 - Adds a tooltip line on recipes for every character with matching profession
@@ -28,7 +25,7 @@
 
 ## Known issues
 
-- No support for WotLK recipes
+- None currently
 
 ## Contribution
 
