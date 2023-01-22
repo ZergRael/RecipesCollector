@@ -106,27 +106,36 @@ function RC:GetAllSkills()
     return skills
 end
 
--- Tooltip hook, used to read recipes requirements and append own lines
+-- Tooltip hook, used to read recipes requirements or craft spell info
 function RC:OnTooltipSetItem(tooltip)
     local _, itemLink = tooltip:GetItem()
-    if not itemLink then
+    if itemLink then
+        self:HandleItemTooltip(tooltip, itemLink)
         return
     end
 
-    local recipeID, _, _, _, _, classID, subclassID = _G.GetItemInfoInstant(itemLink)
+    local _, spellLink = tooltip:GetSpell()
+    if spellLink then
+        self:HandleSpellTooltip(tooltip, spellLink)
+    end
+end
+
+-- Read recipe tooltip and append own lines
+function RC:HandleItemTooltip(tooltip, itemLink)
+    local recipeId, _, _, _, _, classID, subclassID = _G.GetItemInfoInstant(itemLink)
     if classID ~= _G.LE_ITEM_CLASS_RECIPE then
         return
     end
 
-    local spellId, itemId = Recipes:GetRecipeInfo(recipeID)
+    local spellId, itemId = Recipes:GetRecipeInfo(recipeId)
     if not spellId then
         return
     end
 
     -- Recipes tooltip are called twice except for enchanting
     -- The second seems to be a better option as it will put text on the lower end of the tooltip
-    if subclassID ~= _G.LE_ITEM_RECIPE_ENCHANTING and self.debounceRecipe ~= recipeID then
-        self.debounceRecipe = recipeID
+    if subclassID ~= _G.LE_ITEM_RECIPE_ENCHANTING and self.debounceRecipe ~= recipeId then
+        self.debounceRecipe = recipeId
         return
     end
     self.debounceRecipe = nil
@@ -172,6 +181,57 @@ function RC:OnTooltipSetItem(tooltip)
             not (self.db.global.hideAlreadyKnown and alreadyKnown) then
             _G.tinsert(lines, line)
         end
+    end
+
+    if #lines == 0 then
+        return
+    end
+
+    tooltip:AddLine(" ")
+    if compact then
+        tooltip:AddLine(_G.strjoin(' - ', _G.unpack(lines)))
+    else
+        tooltip:AddLine("|cFFAAAAAA" .. addonName .. "|r")
+        for _, line in ipairs(lines) do
+            tooltip:AddLine(line)
+        end
+    end
+end
+
+-- Read craft spell tooltip and append own lines
+function RC:HandleSpellTooltip(tooltip, spellLink)
+    local spellId = select(7, _G.GetSpellInfo(spellLink))
+    if not spellId then
+        return
+    end
+
+    local profession = _G["GameTooltipTextLeft1"]:GetText():match("([%w%s]+)%s?:")
+    if not profession then
+        return
+    end
+
+    if not self.db.factionrealm.recipes[profession] then
+        return
+    end
+
+    local lines = {}
+    local compact = self.db.global.compactMode
+    for charName, recipes in pairs(self.db.factionrealm.recipes[profession]) do
+        local alreadyKnown = _G.tContains(recipes, tostring(spellId))
+        local charSkillRank = self.db.factionrealm.professions[charName] and
+            self.db.factionrealm.professions[charName][profession]
+
+        local line = "|c" .. select(4, _G.GetClassColor(self.db.factionrealm.classes[charName])) .. charName .. "|r"
+        if not compact and charSkillRank then
+            line = line .. " |cFFAAAAAA(" .. charSkillRank .. ")|r"
+        end
+        if alreadyKnown then
+            line = line .. " |cFF00FF00" .. (compact and _G.YES or _G.ITEM_SPELL_KNOWN) .. "|r"
+        else
+            line = line .. " |cFFDB8139" .. (compact and _G.NO or _G.UNKNOWN) .. "|r"
+        end
+
+        _G.tinsert(lines, line)
     end
 
     if #lines == 0 then
