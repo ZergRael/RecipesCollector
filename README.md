@@ -6,14 +6,15 @@
 
 - Adds a tooltip line on recipes for every character with matching profession
 
-![](https://img.thetabx.net/O3QWi.png)
+![](https://img.klso.fr/O3QWi.png)
 
 - Compact mode
 
-![](https://img.thetabx.net/1lKAM.png)
+![](https://img.klso.fr/1lKAM.png)
 
 - Hide if unlearnable
 - Hide if already known
+- Can also add to linked tradeskill
 
 ## Commands
 
