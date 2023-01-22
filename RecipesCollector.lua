@@ -11,6 +11,7 @@ function RC:OnInitialize()
             compactMode = false,
             hideAlreadyKnown = false,
             hideUnlearnable = true,
+            showOnCraftingSpells = true,
         },
         factionrealm = {
             classes = {},
@@ -111,6 +112,10 @@ function RC:OnTooltipSetItem(tooltip)
     local _, itemLink = tooltip:GetItem()
     if itemLink then
         self:HandleItemTooltip(tooltip, itemLink)
+        return
+    end
+
+    if not self.db.global.showOnCraftingSpells then
         return
     end
 

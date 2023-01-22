@@ -49,6 +49,13 @@ function RC:RegisterOptionsTable()
                                 get = function() return self.db.global.hideUnlearnable end,
                                 set = function(_, val) self.db.global.hideUnlearnable = val end,
                             },
+                            showOnCraftingSpells = {
+                                order = 40,
+                                type = "toggle",
+                                name = L["Add to linked tradeskill"],
+                                get = function() return self.db.global.showOnCraftingSpells end,
+                                set = function(_, val) self.db.global.showOnCraftingSpells = val end,
+                            },
                         },
                     },
                     db = {
