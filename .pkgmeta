@@ -10,7 +10,7 @@ externals:
   Libs/AceHook-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceHook-3.0
   Libs/AceLocale-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceLocale-3.0
   Libs/CallbackHandler-1.0: https://repos.curseforge.com/wow/callbackhandler/trunk/CallbackHandler-1.0
-  Libs/LibRecipes-3.0: https://repos.curseforge.com/wow/librecipes-3-0
+  Libs/LibRecipes-3.0: https://repos.curseforge.com/wow/LibRecipes-3.0
 
 ignore:
   - README.md
