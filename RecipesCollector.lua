@@ -210,6 +210,11 @@ function RC:HandleSpellTooltip(tooltip, spellLink)
         return
     end
 
+    local recipeId, itemId = Recipes:GetSpellInfo(spellId)
+    if not recipeId then
+        return
+    end
+
     local profession = _G["GameTooltipTextLeft1"]:GetText():match("([%w%s]+)%s?:")
     if not profession then
         return
@@ -222,7 +227,7 @@ function RC:HandleSpellTooltip(tooltip, spellLink)
     local lines = {}
     local compact = self.db.global.compactMode
     for charName, recipes in pairs(self.db.factionrealm.recipes[profession]) do
-        local alreadyKnown = _G.tContains(recipes, tostring(spellId))
+        local alreadyKnown = _G.tContains(recipes, tostring(itemId or spellId))
         local charSkillRank = self.db.factionrealm.professions[charName] and
             self.db.factionrealm.professions[charName][profession]
 
