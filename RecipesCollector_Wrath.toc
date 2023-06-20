@@ -1,4 +1,4 @@
-## Interface: 30401
+## Interface: 30402
 ## Title: RecipesCollector
 ## Notes: Track known professions across every alt with a tooltip addition on recipes
 ## Author: zergrael
