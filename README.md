@@ -6,11 +6,11 @@
 
 - Adds a tooltip line on recipes for every character with matching profession
 
-![](https://img.klso.fr/O3QWi.png)
+![](https://img.klso.fr/image/e7777331-c0f6-45ed-8257-b5a40337ece3.png)
 
 - Compact mode
 
-![](https://img.klso.fr/1lKAM.png)
+![](https://img.klso.fr/image/dc2201b5-b829-4df8-9d99-daaf9f9e90c0.png)
 
 - Hide if unlearnable
 - Hide if already known
