@@ -17,7 +17,8 @@ function RC:OnInitialize()
             hideAlreadyKnown = false,
             hideUnlearnable = true,
             showOnCraftingSpells = true,
-            showLastUpdate = true,
+            showLastUpdate = false,
+            firstRun = true,
         },
         factionrealm = {
             classes = {},
@@ -41,6 +42,11 @@ function RC:OnInitialize()
 
     -- Options init
     self:RegisterOptionsTable()
+
+    if self.db.global.firstRun then
+        self.db.global.firstRun = false
+        print(addonName .. ": " .. L["firstrun.info"])
+    end
 end
 
 -- Tradeskill frame updated

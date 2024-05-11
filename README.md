@@ -14,7 +14,18 @@
 
 - Hide if unlearnable
 - Hide if already known
-- Can also add to linked tradeskill
+- Works on linked tradeskill spells
+
+## Build your database
+
+Due to Blizzard API limitations, the addon cannot discover your professions by itself.
+
+In order to work properly, the addon needs to see at least once every crafting frame on every character you want to track.
+This will build an internal database of your professions.
+
+Also, you may want to open the crafting frame to refresh the database after learning a new craft.
+
+The age of the internal database can optionaly be displayed on full mode.
 
 ## Commands
 

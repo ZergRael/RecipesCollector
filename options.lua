@@ -78,7 +78,7 @@ function RC:RegisterOptionsTable()
                             intro = {
                                 order = 0,
                                 type = "description",
-                                name = L["database.isempty"],
+                                name = L["firstrun.info"],
                             },
                             purgeTradeSkill = {
                                 order = 80,
