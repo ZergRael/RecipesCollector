@@ -1,5 +1,7 @@
 local addonName = "RecipesCollector"
+---@class RC : AceAddon, AceEvent-3.0, AceHook-3.0
 local RC = _G.LibStub("AceAddon-3.0"):NewAddon(addonName, "AceEvent-3.0", "AceHook-3.0")
+---@class L : AceLocale-3.0
 local L = _G.LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local Recipes = _G.LibStub("LibRecipes-3.0")
 
@@ -25,9 +27,11 @@ function RC:OnInitialize()
     self.debounceRecipe = nil
 
     -- Events register
+    ---@diagnostic disable-next-line: param-type-mismatch -- this event has been removed in retail
     self:RegisterEvent("TRADE_SKILL_UPDATE")
 
     -- Hooks
+    ---@diagnostic disable-next-line: param-type-mismatch -- GameTooltip hookscript is not supported properly by luals
     self:HookScript(_G.GameTooltip, "OnTooltipSetItem", "OnTooltipSetItem")
 
     -- Options init
@@ -42,7 +46,9 @@ function RC:TRADE_SKILL_UPDATE()
         return
     end
 
+    ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
     local numRecipes = _G:GetNumTradeSkills()
+    ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
     local currentTradeSkill = _G.GetTradeSkillLine()
     self:InitializeDBForPlayerIfNecessary(playerName, _G.UnitClassBase("player"), currentTradeSkill)
 
@@ -53,9 +59,12 @@ function RC:TRADE_SKILL_UPDATE()
     self.db.factionrealm.numRecipesPerTradeskill[currentTradeSkill][playerName] = numRecipes
 
     for idx = 1, numRecipes, 1 do
+        ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
         local _, skillType = _G.GetTradeSkillInfo(idx);
         if skillType ~= "header" and skillType ~= nil then
+            ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
             local tradeSkillLink = _G.GetTradeSkillItemLink(idx)
+            ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
             local enchantLink = _G.GetTradeSkillRecipeLink(idx)
             local recipeId = tradeSkillLink and tradeSkillLink:match("item:(%d+):") or
                 enchantLink:match("enchant:(%d+)|")
@@ -68,6 +77,9 @@ function RC:TRADE_SKILL_UPDATE()
 end
 
 -- Generate initial database structure for a character tradeskill
+---@param playerName string
+---@param playerClass string Locale independant player class
+---@param tradeSkillName string
 function RC:InitializeDBForPlayerIfNecessary(playerName, playerClass, tradeSkillName)
     if self.db.factionrealm.numRecipesPerTradeskill[tradeSkillName] == nil then
         self.db.factionrealm.numRecipesPerTradeskill[tradeSkillName] = {}
@@ -86,16 +98,23 @@ function RC:InitializeDBForPlayerIfNecessary(playerName, playerClass, tradeSkill
     self.db.factionrealm.professions[playerName] = self:GetAllSkills()
 end
 
+-- Retrieve currently known recipes count
+---@param playerName string
+---@param tradeSkillName string
+---@return integer
 function RC:GetNumRecipesPerTradeskill(playerName, tradeSkillName)
     return self.db.factionrealm.numRecipesPerTradeskill[tradeSkillName][playerName]
 end
 
 -- Scan all skills and return professions related ones with skill rank
+---@return table
 function RC:GetAllSkills()
     local professionsNames = self.ProfessionNames[_G.GetLocale()]
     local skills = {}
+    ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
     local numSkills = _G.GetNumSkillLines();
     for idx = 1, numSkills, 1 do
+        ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
         local skillName, header, _, skillRank = _G.GetSkillLineInfo(idx);
         if not header then
             if _G.tContains(professionsNames, skillName) then
@@ -108,6 +127,7 @@ function RC:GetAllSkills()
 end
 
 -- Tooltip hook, used to read recipes requirements or craft spell info
+---@param tooltip GameTooltip
 function RC:OnTooltipSetItem(tooltip)
     local _, itemLink = tooltip:GetItem()
     if itemLink then
@@ -119,19 +139,22 @@ function RC:OnTooltipSetItem(tooltip)
         return
     end
 
-    local _, spellLink = tooltip:GetSpell()
-    if spellLink then
-        self:HandleSpellTooltip(tooltip, spellLink)
+    local _, spellId = tooltip:GetSpell()
+    if spellId then
+        self:HandleSpellTooltip(tooltip, spellId)
     end
 end
 
 -- Read recipe tooltip and append own lines
+---@param tooltip GameTooltip
+---@param itemLink string
 function RC:HandleItemTooltip(tooltip, itemLink)
-    local recipeId, _, _, _, _, classID, subclassID = _G.GetItemInfoInstant(itemLink)
-    if classID ~= _G.LE_ITEM_CLASS_RECIPE then
+    local recipeId, _, _, _, _, classID, subclassID = _G.C_Item.GetItemInfoInstant(itemLink)
+    if classID ~= _G.Enum.ItemClass.Recipe then
         return
     end
 
+    ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
     local spellId, itemId = Recipes:GetRecipeInfo(recipeId)
     if not spellId then
         return
@@ -139,7 +162,7 @@ function RC:HandleItemTooltip(tooltip, itemLink)
 
     -- Recipes tooltip are called twice except for enchanting
     -- The second seems to be a better option as it will put text on the lower end of the tooltip
-    if subclassID ~= _G.LE_ITEM_RECIPE_ENCHANTING and self.debounceRecipe ~= recipeId then
+    if subclassID ~= _G.Enum.ItemRecipeSubclass and self.debounceRecipe ~= recipeId then
         self.debounceRecipe = recipeId
         return
     end
@@ -173,11 +196,14 @@ function RC:HandleItemTooltip(tooltip, itemLink)
             line = line .. " |cFFAAAAAA(" .. charSkillRank .. ")|r"
         end
         if alreadyKnown then
+            ---@diagnostic disable-next-line: undefined-field
             line = line .. " |cFF00FF00" .. (compact and _G.YES or _G.ITEM_SPELL_KNOWN) .. "|r"
         else
             if charSkillRank and charSkillRank >= tonumber(skillRank) then
+                ---@diagnostic disable-next-line: undefined-field
                 line = line .. " |cFFDB8139" .. (compact and _G.NO or _G.UNKNOWN) .. "|r"
             else
+                ---@diagnostic disable-next-line: undefined-field
                 line = line .. " |cFFCC0000" .. (compact and "X" or _G.SPELL_FAILED_LOW_CASTLEVEL) .. "|r"
             end
         end
@@ -204,12 +230,14 @@ function RC:HandleItemTooltip(tooltip, itemLink)
 end
 
 -- Read craft spell tooltip and append own lines
-function RC:HandleSpellTooltip(tooltip, spellLink)
-    local spellId = select(7, _G.GetSpellInfo(spellLink))
+---@param tooltip GameTooltip
+---@param spellId integer
+function RC:HandleSpellTooltip(tooltip, spellId)
     if not spellId then
         return
     end
 
+    ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
     local recipeId, itemId = Recipes:GetSpellInfo(spellId)
     if not recipeId then
         return
@@ -236,8 +264,10 @@ function RC:HandleSpellTooltip(tooltip, spellLink)
             line = line .. " |cFFAAAAAA(" .. charSkillRank .. ")|r"
         end
         if alreadyKnown then
+            ---@diagnostic disable-next-line: undefined-field
             line = line .. " |cFF00FF00" .. (compact and _G.YES or _G.ITEM_SPELL_KNOWN) .. "|r"
         else
+            ---@diagnostic disable-next-line: undefined-field
             line = line .. " |cFFDB8139" .. (compact and _G.NO or _G.UNKNOWN) .. "|r"
         end
 
@@ -260,6 +290,7 @@ function RC:HandleSpellTooltip(tooltip, spellLink)
 end
 
 -- List database profiles
+---@return table
 function RC:ListProfiles()
     local profiles = {}
 
@@ -273,6 +304,7 @@ function RC:ListProfiles()
 end
 
 -- Remove specific charname & tradeskill profile from database
+---@param profile string Profile key from database
 function RC:RemoveProfile(profile)
     local charName, tradeSkillName = _G.strsplit("_", profile)
     self.db.factionrealm.recipes[tradeSkillName][charName] = nil

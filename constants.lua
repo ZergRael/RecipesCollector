@@ -1,4 +1,5 @@
 local addonName = "RecipesCollector"
+---@class RC : AceAddon
 local RC = _G.LibStub("AceAddon-3.0"):GetAddon(addonName)
 
 RC.ProfessionNames = {

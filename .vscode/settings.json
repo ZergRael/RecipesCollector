@@ -1,4 +1,12 @@
 {
-  "Lua.diagnostics.globals": [],
+  "Lua.diagnostics.globals": [
+    "print",
+    "_G",
+    "pairs",
+    "select",
+    "ipairs",
+    "tostring",
+    "tonumber"
+  ],
   "Lua.runtime.version": "Lua 5.1"
 }

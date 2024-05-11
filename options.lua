@@ -1,10 +1,13 @@
 local addonName = "RecipesCollector"
-local addonNotes = select(3, _G.GetAddOnInfo(addonName))
+local addonNotes = select(3, C_AddOns.GetAddOnInfo(addonName))
+---@class RC : AceAddon
 local RC = _G.LibStub("AceAddon-3.0"):GetAddon(addonName)
+---@class L : AceLocale-3.0
 local L = _G.LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local AceConfig = _G.LibStub("AceConfig-3.0")
 local AceConfigDialog = _G.LibStub("AceConfigDialog-3.0")
 
+-- Generate options and include them in client Addons Options
 function RC:RegisterOptionsTable()
     AceConfig:RegisterOptionsTable(addonName, {
         name = addonName,
@@ -21,6 +24,7 @@ function RC:RegisterOptionsTable()
                         order = 0,
                         type = "description",
                         name = addonNotes,
+                        args = {},
                     },
                     general = {
                         order = 10,
@@ -34,6 +38,7 @@ function RC:RegisterOptionsTable()
                                 name = L["Compact mode"],
                                 get = function() return self.db.global.compactMode end,
                                 set = function(_, val) self.db.global.compactMode = val end,
+                                args = {},
                             },
                             hideAlreadyKnown = {
                                 order = 20,
@@ -41,6 +46,7 @@ function RC:RegisterOptionsTable()
                                 name = L["Hide if already known"],
                                 get = function() return self.db.global.hideAlreadyKnown end,
                                 set = function(_, val) self.db.global.hideAlreadyKnown = val end,
+                                args = {},
                             },
                             hideUnlearnable = {
                                 order = 30,
@@ -48,6 +54,7 @@ function RC:RegisterOptionsTable()
                                 name = L["Hide if skill not high enough"],
                                 get = function() return self.db.global.hideUnlearnable end,
                                 set = function(_, val) self.db.global.hideUnlearnable = val end,
+                                args = {},
                             },
                             showOnCraftingSpells = {
                                 order = 40,
@@ -55,6 +62,7 @@ function RC:RegisterOptionsTable()
                                 name = L["Add to linked tradeskill"],
                                 get = function() return self.db.global.showOnCraftingSpells end,
                                 set = function(_, val) self.db.global.showOnCraftingSpells = val end,
+                                args = {},
                             },
                         },
                     },
@@ -73,6 +81,7 @@ function RC:RegisterOptionsTable()
                                     RC:RemoveProfile(val)
                                     val = nil
                                 end,
+                                args = {},
                             },
                         },
                     }
