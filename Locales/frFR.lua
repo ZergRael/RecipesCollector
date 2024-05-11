@@ -11,3 +11,4 @@ L["Hide if skill not high enough"] = "Cacher si niveau insuffisant"
 L["Options"] = true
 L["Requires ([%w%s]+) %((%d+)%)"] = "([%w%s]+) %((%d+)%) requis"
 L["Add to linked tradeskill"] = "Ajouter sur les sorts de métier"
+L["Show last update"] = "Afficher la dernière mise à jour"

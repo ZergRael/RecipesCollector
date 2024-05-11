@@ -60,6 +60,13 @@ function RC:RegisterOptionsTable()
                                 get = function() return self.db.global.showOnCraftingSpells end,
                                 set = function(_, val) self.db.global.showOnCraftingSpells = val end,
                             },
+                            showLastUpdate = {
+                                order = 50,
+                                type = "toggle",
+                                name = L["Show last update"],
+                                get = function() return self.db.global.showLastUpdate end,
+                                set = function(_, val) self.db.global.showLastUpdate = val end,
+                            },
                         },
                     },
                     db = {
@@ -68,6 +75,11 @@ function RC:RegisterOptionsTable()
                         name = L["Database Settings"],
                         inline = true,
                         args = {
+                            intro = {
+                                order = 0,
+                                type = "description",
+                                name = L["database.isempty"],
+                            },
                             purgeTradeSkill = {
                                 order = 80,
                                 type = "select",

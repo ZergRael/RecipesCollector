@@ -6,7 +6,9 @@
     "select",
     "ipairs",
     "tostring",
-    "tonumber"
+    "tonumber",
+    "show",
+    "INT_GENERAL_DURATION_DAYS"
   ],
   "Lua.runtime.version": "Lua 5.1"
 }
