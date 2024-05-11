@@ -5,6 +5,9 @@ local RC = _G.LibStub("AceAddon-3.0"):NewAddon(addonName, "AceEvent-3.0", "AceHo
 local L = _G.LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local Recipes = _G.LibStub("LibRecipes-3.0")
 
+RC.IsEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+RC.IsClassic = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+
 -- Addon init
 function RC:OnInitialize()
     -- Addon savedvariables database
@@ -95,7 +98,7 @@ function RC:InitializeDBForPlayerIfNecessary(playerName, playerClass, tradeSkill
     end
 
     self.db.factionrealm.classes[playerName] = playerClass
-    self.db.factionrealm.professions[playerName] = self:GetAllSkills()
+    self.db.factionrealm.professions[playerName] = self:GetProfessionRanks()
 end
 
 -- Retrieve currently known recipes count
@@ -108,17 +111,29 @@ end
 
 -- Scan all skills and return professions related ones with skill rank
 ---@return table
-function RC:GetAllSkills()
+function RC:GetProfessionRanks()
     local professionsNames = self.ProfessionNames[_G.GetLocale()]
     local skills = {}
-    ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
-    local numSkills = _G.GetNumSkillLines();
-    for idx = 1, numSkills, 1 do
+
+    if self.IsEra then
         ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
-        local skillName, header, _, skillRank = _G.GetSkillLineInfo(idx);
-        if not header then
-            if _G.tContains(professionsNames, skillName) then
-                skills[skillName] = skillRank
+        local numSkills = _G.GetNumSkillLines();
+        for idx = 1, numSkills, 1 do
+            ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
+            local skillName, header, _, skillRank = _G.GetSkillLineInfo(idx);
+            if not header then
+                if _G.tContains(professionsNames, skillName) then
+                    skills[skillName] = skillRank
+                end
+            end
+        end
+    elseif self.IsClassic then
+        local professionsIndexes = { _G.GetProfessions() }
+        for idx = 1, #professionsIndexes, 1 do
+            if professionsIndexes[idx] ~= nil then
+                local name, _, skillRank = GetProfessionInfo(professionsIndexes[idx])
+                skills[name] = skillRank
+                print(name, skillRank)
             end
         end
     end
@@ -154,7 +169,7 @@ function RC:HandleItemTooltip(tooltip, itemLink)
         return
     end
 
-    ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
+    ---@diagnostic disable-next-line: undefined-field -- this library is not known by luals
     local spellId, itemId = Recipes:GetRecipeInfo(recipeId)
     if not spellId then
         return
@@ -237,7 +252,7 @@ function RC:HandleSpellTooltip(tooltip, spellId)
         return
     end
 
-    ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
+    ---@diagnostic disable-next-line: undefined-field -- this library is not known by luals
     local recipeId, itemId = Recipes:GetSpellInfo(spellId)
     if not recipeId then
         return
