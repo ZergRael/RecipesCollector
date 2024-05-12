@@ -41,7 +41,7 @@ function RC:OnInitialize()
     ---@diagnostic disable-next-line: param-type-mismatch -- GameTooltip hookscript is not supported properly by luals
     self:HookScript(_G.GameTooltip, "OnTooltipSetItem", "OnTooltipSetItem")
     ---@diagnostic disable-next-line: param-type-mismatch -- GameTooltip hookscript is not supported properly by luals
-    self:HookScript(_G.GameTooltip, "OnTooltipSetSpell", "OnTooltipSetItem")
+    self:HookScript(_G.GameTooltip, "OnTooltipSetSpell", "OnTooltipSetSpell")
 
     -- Options init
     self:RegisterOptionsTable()
@@ -161,9 +161,12 @@ function RC:OnTooltipSetItem(tooltip)
     local _, itemLink = tooltip:GetItem()
     if itemLink then
         self:HandleItemTooltip(tooltip, itemLink)
-        return
     end
+end
 
+-- Tooltip hook, used to read recipes requirements or craft spell info
+---@param tooltip GameTooltip
+function RC:OnTooltipSetSpell(tooltip)
     if not self.db.global.showOnCraftingSpells then
         return
     end
