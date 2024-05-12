@@ -122,7 +122,7 @@ function RC:GetNumRecipesPerTradeskill(playerName, tradeSkillName)
 end
 
 -- Scan all skills and return professions related ones with skill rank
----@return table
+---@return table<string,integer>
 function RC:GetProfessionRanks()
     local professionsNames = self.ProfessionNames[_G.GetLocale()]
     local skills = {}
@@ -223,26 +223,21 @@ function RC:HandleItemTooltip(tooltip, itemLink)
         end
 
         if alreadyKnown then
-            ---@diagnostic disable-next-line: undefined-field
-            line = line .. " |cFF00FF00" .. (compact and _G.YES or _G.ITEM_SPELL_KNOWN) .. "|r"
+            line = line .. " |cFF00FF00" .. (compact and YES or ITEM_SPELL_KNOWN) .. "|r"
         else
             if charSkillRank and charSkillRank >= tonumber(skillRank) then
-                ---@diagnostic disable-next-line: undefined-field
-                line = line .. " |cFFDB8139" .. (compact and _G.NO or _G.UNKNOWN) .. "|r"
+                line = line .. " |cFFDB8139" .. (compact and NO or UNKNOWN) .. "|r"
             else
-                ---@diagnostic disable-next-line: undefined-field
-                line = line .. " |cFFCC0000" .. (compact and "X" or _G.SPELL_FAILED_LOW_CASTLEVEL) .. "|r"
+                line = line .. " |cFFCC0000" .. (compact and "X" or SPELL_FAILED_LOW_CASTLEVEL) .. "|r"
             end
         end
 
         if not compact and self.db.global.showLastUpdate then
             local lastUpdate = self.db.factionrealm.lastUpdate[charName] and
                 self.db.factionrealm.lastUpdate[charName][profession]
-            ---@diagnostic disable-next-line: undefined-field
-            local lastUpdateDaysAgo = lastUpdate and format(_G.INT_GENERAL_DURATION_DAYS,
+            local lastUpdateDaysAgo = lastUpdate and format(INT_GENERAL_DURATION_DAYS,
                 floor(difftime(time(), self.db.factionrealm.lastUpdate[charName][profession]) / (24 * 60 * 60)))
-            ---@diagnostic disable-next-line: undefined-field
-            line = line .. " |cFF999999(" .. (lastUpdateDaysAgo or _G.UNKNOWN) .. ")|r"
+            line = line .. " |cFF999999(" .. (lastUpdateDaysAgo or UNKNOWN) .. ")|r"
         end
 
         if (not self.db.global.hideUnlearnable or (charSkillRank and charSkillRank >= tonumber(skillRank))) and
@@ -301,21 +296,17 @@ function RC:HandleSpellTooltip(tooltip, spellId)
             line = line .. " |cFFAAAAAA(" .. charSkillRank .. ")|r"
         end
         if alreadyKnown then
-            ---@diagnostic disable-next-line: undefined-field
-            line = line .. " |cFF00FF00" .. (compact and _G.YES or _G.ITEM_SPELL_KNOWN) .. "|r"
+            line = line .. " |cFF00FF00" .. (compact and YES or ITEM_SPELL_KNOWN) .. "|r"
         else
-            ---@diagnostic disable-next-line: undefined-field
-            line = line .. " |cFFDB8139" .. (compact and _G.NO or _G.UNKNOWN) .. "|r"
+            line = line .. " |cFFDB8139" .. (compact and NO or UNKNOWN) .. "|r"
         end
 
         if not compact and self.db.global.showLastUpdate then
             local lastUpdate = self.db.factionrealm.lastUpdate[charName] and
                 self.db.factionrealm.lastUpdate[charName][profession]
-            ---@diagnostic disable-next-line: undefined-field
-            local lastUpdateDaysAgo = lastUpdate and format(_G.INT_GENERAL_DURATION_DAYS,
+            local lastUpdateDaysAgo = lastUpdate and format(INT_GENERAL_DURATION_DAYS,
                 floor(difftime(time(), self.db.factionrealm.lastUpdate[charName][profession]) / (24 * 60 * 60)))
-            ---@diagnostic disable-next-line: undefined-field
-            line = line .. " |cFF999999(" .. (lastUpdateDaysAgo or _G.UNKNOWN) .. ")|r"
+            line = line .. " |cFF999999(" .. (lastUpdateDaysAgo or UNKNOWN) .. ")|r"
         end
 
         _G.tinsert(lines, line)
@@ -337,7 +328,7 @@ function RC:HandleSpellTooltip(tooltip, spellId)
 end
 
 -- List database profiles
----@return table
+---@return table<string,string>
 function RC:ListProfiles()
     local profiles = {}
 
@@ -345,8 +336,7 @@ function RC:ListProfiles()
         for charName, _ in pairs(chars) do
             local lastUpdate = self.db.factionrealm.lastUpdate[charName] and
                 self.db.factionrealm.lastUpdate[charName][tradeSkillName]
-            ---@diagnostic disable-next-line: undefined-field
-            local lastUpdateDaysAgo = lastUpdate and format(_G.INT_GENERAL_DURATION_DAYS,
+            local lastUpdateDaysAgo = lastUpdate and format(INT_GENERAL_DURATION_DAYS,
                 floor(difftime(time(), self.db.factionrealm.lastUpdate[charName][tradeSkillName]) / (24 * 60 * 60)))
             profiles[charName .. "_" .. tradeSkillName] = charName .. " - " .. tradeSkillName ..
                 (lastUpdateDaysAgo and (" (" .. lastUpdateDaysAgo .. ")") or "")

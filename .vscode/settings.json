@@ -8,7 +8,12 @@
     "tostring",
     "tonumber",
     "show",
-    "INT_GENERAL_DURATION_DAYS"
+    "INT_GENERAL_DURATION_DAYS",
+    "YES",
+    "NO",
+    "ITEM_SPELL_KNOWN",
+    "UNKNOWN",
+    "SPELL_FAILED_LOW_CASTLEVEL"
   ],
   "Lua.runtime.version": "Lua 5.1"
 }
