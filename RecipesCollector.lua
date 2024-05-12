@@ -18,6 +18,7 @@ function RC:OnInitialize()
             hideUnlearnable = true,
             showOnCraftingSpells = true,
             showLastUpdate = false,
+            hideHeader = false,
             firstRun = true,
         },
         factionrealm = {
@@ -246,19 +247,7 @@ function RC:HandleItemTooltip(tooltip, itemLink)
         end
     end
 
-    if #lines == 0 then
-        return
-    end
-
-    tooltip:AddLine(" ")
-    if compact then
-        tooltip:AddLine(_G.strjoin(' - ', _G.unpack(lines)))
-    else
-        tooltip:AddLine("|cFFAAAAAA" .. addonName .. "|r")
-        for _, line in ipairs(lines) do
-            tooltip:AddLine(line)
-        end
-    end
+    self:AppendToTooltip(tooltip, lines)
 end
 
 -- Read craft spell tooltip and append own lines
@@ -312,15 +301,24 @@ function RC:HandleSpellTooltip(tooltip, spellId)
         _G.tinsert(lines, line)
     end
 
+    self:AppendToTooltip(tooltip, lines)
+end
+
+-- Append text to tooltip
+---@param tooltip GameTooltip
+---@param lines table<integer,string>
+function RC:AppendToTooltip(tooltip, lines)
     if #lines == 0 then
         return
     end
 
     tooltip:AddLine(" ")
-    if compact then
+    if self.db.global.compactMode then
         tooltip:AddLine(_G.strjoin(' - ', _G.unpack(lines)))
     else
-        tooltip:AddLine("|cFFAAAAAA" .. addonName .. "|r")
+        if not self.db.global.hideHeader then
+            tooltip:AddLine("|cFFAAAAAA" .. addonName .. "|r")
+        end
         for _, line in ipairs(lines) do
             tooltip:AddLine(line)
         end

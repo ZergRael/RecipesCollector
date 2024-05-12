@@ -53,15 +53,22 @@ function RC:RegisterOptionsTable()
                                 get = function() return self.db.global.hideUnlearnable end,
                                 set = function(_, val) self.db.global.hideUnlearnable = val end,
                             },
-                            showOnCraftingSpells = {
+                            hideHeader = {
                                 order = 40,
+                                type = "toggle",
+                                name = L["Hide addon header from tooltip"],
+                                get = function() return self.db.global.hideHeader end,
+                                set = function(_, val) self.db.global.hideHeader = val end,
+                            },
+                            showOnCraftingSpells = {
+                                order = 50,
                                 type = "toggle",
                                 name = L["Add to linked tradeskill"],
                                 get = function() return self.db.global.showOnCraftingSpells end,
                                 set = function(_, val) self.db.global.showOnCraftingSpells = val end,
                             },
                             showLastUpdate = {
-                                order = 50,
+                                order = 60,
                                 type = "toggle",
                                 name = L["Show last update"],
                                 get = function() return self.db.global.showLastUpdate end,

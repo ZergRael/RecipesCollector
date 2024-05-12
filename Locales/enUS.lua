@@ -11,5 +11,6 @@ L["Hide if already known"] = "Hide if already known"
 L["Hide if skill not high enough"] = "Hide if skill not high enough"
 L["Add to linked tradeskill"] = "Add to linked tradeskill"
 L["Show last update"] = "Show last update"
+L["Hide addon header from tooltip"] = "Hide addon header from tooltip"
 L["firstrun.info"] =
 "In order to work properly, the addon needs to see at least once every crafting frame on every character you want to track."
