@@ -40,6 +40,8 @@ function RC:OnInitialize()
     -- Hooks
     ---@diagnostic disable-next-line: param-type-mismatch -- GameTooltip hookscript is not supported properly by luals
     self:HookScript(_G.GameTooltip, "OnTooltipSetItem", "OnTooltipSetItem")
+    ---@diagnostic disable-next-line: param-type-mismatch -- GameTooltip hookscript is not supported properly by luals
+    self:HookScript(_G.GameTooltip, "OnTooltipSetSpell", "OnTooltipSetItem")
 
     -- Options init
     self:RegisterOptionsTable()
