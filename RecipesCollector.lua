@@ -194,7 +194,7 @@ function RC:HandleItemTooltip(tooltip, itemLink)
 
     -- Recipes tooltip are called twice except for enchanting
     -- The second seems to be a better option as it will put text on the lower end of the tooltip
-    if subclassID ~= _G.Enum.ItemRecipeSubclass and self.debounceRecipe ~= recipeId then
+    if subclassID ~= _G.Enum.ItemRecipeSubclass.Enchanting and self.debounceRecipe ~= recipeId then
         self.debounceRecipe = recipeId
         return
     end
