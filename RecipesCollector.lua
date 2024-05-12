@@ -5,8 +5,8 @@ local RC = _G.LibStub("AceAddon-3.0"):NewAddon(addonName, "AceEvent-3.0", "AceHo
 local L = _G.LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local Recipes = _G.LibStub("LibRecipes-3.0")
 
-RC.IsEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-RC.IsClassic = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+RC.IsEra = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC
+RC.IsClassic = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CATACLYSM_CLASSIC
 
 -- Addon init
 function RC:OnInitialize()
@@ -146,7 +146,7 @@ function RC:GetProfessionRanks()
         local professionsIndexes = { _G.GetProfessions() }
         for idx = 1, #professionsIndexes, 1 do
             if professionsIndexes[idx] ~= nil then
-                local name, _, skillRank = GetProfessionInfo(professionsIndexes[idx])
+                local name, _, skillRank = _G.GetProfessionInfo(professionsIndexes[idx])
                 skills[name] = skillRank
             end
         end

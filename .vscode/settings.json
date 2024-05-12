@@ -8,6 +8,10 @@
     "tostring",
     "tonumber",
     "show",
+    "time",
+    "format",
+    "floor",
+    "difftime",
     "INT_GENERAL_DURATION_DAYS",
     "YES",
     "NO",
@@ -15,5 +19,6 @@
     "UNKNOWN",
     "SPELL_FAILED_LOW_CASTLEVEL"
   ],
-  "Lua.runtime.version": "Lua 5.1"
+  "Lua.runtime.version": "Lua 5.1",
+  "Lua.workspace.ignoreDir": ["Libs", ".vscode"]
 }
