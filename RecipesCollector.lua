@@ -75,7 +75,7 @@ function RC:TRADE_SKILL_UPDATE()
     for idx = 1, numRecipes, 1 do
         ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
         local _, skillType = _G.GetTradeSkillInfo(idx);
-        if skillType ~= "header" and skillType ~= nil then
+        if skillType ~= "header" and skillType ~= "subheader" and skillType ~= nil then
             ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail
             local tradeSkillLink = _G.GetTradeSkillItemLink(idx)
             ---@diagnostic disable-next-line: undefined-field -- this method has been removed in retail

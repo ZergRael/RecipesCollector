@@ -1,17 +1,5 @@
 {
   "Lua.diagnostics.globals": [
-    "print",
-    "_G",
-    "pairs",
-    "select",
-    "ipairs",
-    "tostring",
-    "tonumber",
-    "show",
-    "time",
-    "format",
-    "floor",
-    "difftime",
     "INT_GENERAL_DURATION_DAYS",
     "YES",
     "NO",
@@ -20,5 +8,19 @@
     "SPELL_FAILED_LOW_CASTLEVEL"
   ],
   "Lua.runtime.version": "Lua 5.1",
-  "Lua.workspace.ignoreDir": ["Libs", ".vscode"]
+  "Lua.workspace.ignoreDir": ["Libs", ".vscode"],
+  "Lua.runtime.builtin": {
+    "basic": "disable",
+    "debug": "disable",
+    "io": "disable",
+    "math": "disable",
+    "os": "disable",
+    "package": "disable",
+    "string": "disable",
+    "table": "disable",
+    "utf8": "disable"
+  },
+  "Lua.workspace.library": [
+    "~\\.vscode\\extensions\\ketho.wow-api-0.21.0\\Annotations\\Core"
+  ]
 }
