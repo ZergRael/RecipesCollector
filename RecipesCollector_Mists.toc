@@ -1,4 +1,4 @@
-## Interface: 50500
+## Interface: 50501
 ## Title: RecipesCollector
 ## Notes: Track known professions across every alt with a tooltip addition on recipes
 ## Author: zergrael
