@@ -6,7 +6,7 @@ local L = _G.LibStub("AceLocale-3.0"):GetLocale(addonName, true)
 local Recipes = _G.LibStub("LibRecipes-3.0")
 
 RC.IsEra = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC
-RC.IsClassic = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_CATACLYSM_CLASSIC
+RC.IsClassic = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MISTS_CLASSIC
 
 -- Addon init
 function RC:OnInitialize()
